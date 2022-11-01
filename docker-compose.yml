@@ -1,55 +1,43 @@
 version: "3.2"
 services:
-  nodejs:
-    build: 
-      context: .
-    image: thanhdc/nodejs-mysql-app
-    networks:
-      - frontend
-      - backend
-    environment:
-      - MYSQL_HOST=moe-mysql-app
-      - MYSQL_USER=moeuser
-      - MYSQL_PASS=pass
-      - MYSQL_DB=notes_db
-    volumes:
-      - ./www/:/var/www/html/
-    ports:
-      - "30001:8005"
-    container_name: moe-nodejs-app
-  mysql_db_container:
-    image: mysql:5.7
-    networks:
-      - backend
-    environment:
-      - MYSQL_ROOT_PASSWORD=root
-      - MYSQL_USER=${DB_USER}
-      - MYSQL_PASSWORD=${DB_PASSWORD} 
-      - MYSQL_DATABASE=notes_db
-    container_name: moe-mysql-app
-  phpmyadmin:
-    image: phpmyadmin/phpmyadmin:4.7
-    depends_on:
-      - mysql_db_container
-    networks:
-      - backend
-    ports:
-      - "30002:80"
-    environment:
-      - PMA_HOST=moe-mysql-app
-      - PMA_PORT=3306
-    volumes:
-      - /sessions
-    container_name: moe-phpmyadmin-app
-  # adminer_container:
-  #   image: adminer:latest
+  # nodejs:
+  #   build: 
+  #     context: .
+  #   image: thanhdc/nodejs-mysql-app
+  #   networks:
+  #     - api_frontend
+  #     - api_backend
   #   environment:
-  #     ADMINER_DEFAULT_DB_DRIVER: mysql_db_container
-  #     ADMINER_DESIGN: moe
-  #   ports: 
-  #     - "30003:80"
-  #   container_name: moe-adminer-app
-
-networks:
-  frontend:
-  backend:
+  #     - MYSQL_HOST=moe-mysql-app
+  #     - MYSQL_USER=moeuser
+  #     - MYSQL_PASS=pass
+  #     - MYSQL_DB=notes_db
+  #   volumes:
+  #     - ./www/:/var/www/html/
+  #   ports:
+  #     - "30001:8005"
+  #   container_name: app-notes
+  db:
+    image: mysql:5.7
+    container_name: db
+    environment:
+      MYSQL_ROOT_PASSWORD: $DB_ROOT_PASSWORD
+      MYSQL_DATABASE: $DB_DATABASE
+      MYSQL_USER: $DB_USER
+      MYSQL_PASSWORD: $DB_PASSWORD
+    ports:
+      - "6033:3306"
+    volumes:
+      - ./www:/var/lib/mysql
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: pma
+    links:
+      - db
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+      PMA_ARBITRARY: 1
+    restart: always
+    ports:
+      - 8081:80
