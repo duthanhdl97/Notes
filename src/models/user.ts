@@ -2,9 +2,19 @@ import Sequelize from 'sequelize'
 import DataTypes from 'sequelize/lib/data-types'
 import { generateUlid } from '../utils/ulid'
 
-export type IUser = typeof Sequelize.Model & {
-  new (values?: object, options?: Sequelize.BuildOptions)
-  associate(models: { [key: string]: String }): void
+export interface IUserAttributes {
+  id: string
+  name: string
+  email: string
+  password: string
+  created_at: Date 
+}
+
+export interface IUserInstance extends Sequelize.Model<IUserAttributes>, IUserAttributes {}
+
+export type IUserModel = typeof Sequelize.Model & {
+  new (values?: object, options?: Sequelize.BuildOptions): IUserInstance
+  associate(models: { [key: string]: string }): void
 }
 
 export function getUlidDataType(dataTypes: DataTypes) {
@@ -19,7 +29,7 @@ export function getUlidDataType(dataTypes: DataTypes) {
   }
 }
 
-export default (SequelizeClass: Sequelize.Sequelize, dataTypes: DataTypes): IUser => {
+export default (SequelizeClass: Sequelize.Sequelize, dataTypes: DataTypes) => {
   const User = SequelizeClass.define(
     'User',
     {
@@ -41,9 +51,9 @@ export default (SequelizeClass: Sequelize.Sequelize, dataTypes: DataTypes): IUse
       underscored: true,
       updatedAt: false,
     },
-  ) as IUser
+  ) as IUserModel
 
-  User.associate = () => {
+  User.associate = (models) => {
     // associate
   }
 

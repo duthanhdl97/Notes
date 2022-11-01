@@ -2,9 +2,14 @@ import { buildSubgraphSchema } from '@apollo/federation'
 import { ApolloError } from 'apollo-server-express'
 import { generateUlid } from '../utils/ulid'
 import { getLogger } from '../utils/logger'
+import commonSchema from './common'
 import userSchema from './user'
 
 const serviceSchemas = [
+  {
+    typeDefs: commonSchema.typeDefs,
+    resolvers: commonSchema.resolvers,
+  },
   {
     typeDefs: userSchema.typeDefs,
     resolvers: userSchema.resolvers,

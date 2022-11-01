@@ -9,10 +9,11 @@ const env = process.env.NODE_ENV || 'development'
 const sequelizeConfig = config[env]
 
 const models: any = {}
-const sequelize = new Sequelize.Sequelize(
-  config.database,
-  config.username,
-  config.password,
+
+export const sequelize = new Sequelize.Sequelize(
+  sequelizeConfig.database,
+  sequelizeConfig.username,
+  sequelizeConfig.password,
   sequelizeConfig
 )
 
@@ -38,7 +39,9 @@ Object.keys(models).forEach((modelName) => {
   }
 })
 
-models.sequelize = sequelize
-models.Sequelize = Sequelize
+export const User: any = models.User as any
 
-module.exports = models
+// models.sequelize = sequelize
+// models.Sequelize = Sequelize
+
+// module.exports = models
