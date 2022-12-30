@@ -16,55 +16,55 @@ const serviceSchemas = [
   }
 ]
 
-// const errorHandler = (err, operation) => {
-//   if (err instanceof ApolloError) {
-//     getLogger('access').warn((err && err.stack) || err)
-//     return err
-//   }
-//   const errId = generateUlid()
-//   err.message = `${err.message}: ${errId}`
-//   getLogger('access').error((err && err.stack) || err)
+const errorHandler = (err, operation) => {
+  if (err instanceof ApolloError) {
+    getLogger('access').warn((err && err.stack) || err)
+    return err
+  }
+  const errId = generateUlid()
+  err.message = `${err.message}: ${errId}`
+  getLogger('access').error((err && err.stack) || err)
 
-//   // For mysql error
-//   if (err.original) {
-//     getLogger('access').error(err.original)
-//   }
+  // For mysql error
+  if (err.original) {
+    getLogger('access').error(err.original)
+  }
 
-//   err.message = `Internal Error: ${errId}`
-//   return err
-// }
+  err.message = `Internal Error: ${errId}`
+  return err
+}
 
-// const extendResolvers = (resolvers) => {
-//   Object.keys(resolvers).forEach((queryType) => {
-//     Object.keys(resolvers[queryType]).forEach((operation) => {
-//       const resolver = resolvers[queryType][operation]
-//       resolvers[queryType][operation] = async (root, args, context, info) => {
-//         if (queryType === 'Query' || queryType === 'Mutation') {
-//           try {
-//             const output = await resolver(root, args, context, info)
-//             return output
-//           } catch (e) {
-//             throw errorHandler(e, operation)
-//           }
-//         } else {
-//           try {
-//             const output = await resolver(root, args, context, info)
-//             return output
-//           } catch (e) {
-//             throw errorHandler(e, operation)
-//           }
-//         }
-//       }
-//     })
-//   })
-// }
+const extendResolvers = (resolvers) => {
+  Object.keys(resolvers).forEach((queryType) => {
+    Object.keys(resolvers[queryType]).forEach((operation) => {
+      const resolver = resolvers[queryType][operation]
+      resolvers[queryType][operation] = async (root, args, context, info) => {
+        if (queryType === 'Query' || queryType === 'Mutation') {
+          try {
+            const output = await resolver(root, args, context, info)
+            return output
+          } catch (e) {
+            throw errorHandler(e, operation)
+          }
+        } else {
+          try {
+            const output = await resolver(root, args, context, info)
+            return output
+          } catch (e) {
+            throw errorHandler(e, operation)
+          }
+        }
+      }
+    })
+  })
+}
 
 
-// serviceSchemas.forEach((serviceSchema) => {
-//   if (serviceSchema.resolvers) {
-//     extendResolvers(serviceSchema.resolvers)
-//   }
-// })
+serviceSchemas.forEach((serviceSchema) => {
+  if (serviceSchema.resolvers) {
+    extendResolvers(serviceSchema.resolvers)
+  }
+})
 
 const schema = buildSubgraphSchema(serviceSchemas)
 

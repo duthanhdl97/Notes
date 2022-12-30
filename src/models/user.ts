@@ -3,14 +3,16 @@ import DataTypes from 'sequelize/lib/data-types'
 import { generateUlid } from '../utils/ulid'
 
 export interface IUserAttributes {
-  id: string
-  name: string
-  email: string
-  password: string
-  created_at: Date 
+  id?: string
+  name?: string
+  email?: string
+  password?: string
+  created_at?: Date 
 }
 
-export interface IUserInstance extends Sequelize.Model<IUserAttributes>, IUserAttributes {}
+export interface IUserInstance extends Sequelize.Model<IUserAttributes>, IUserAttributes {
+  id?: string
+}
 
 export type IUserModel = typeof Sequelize.Model & {
   new (values?: object, options?: Sequelize.BuildOptions): IUserInstance

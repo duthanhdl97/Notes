@@ -1,6 +1,7 @@
 import fs from 'fs'
 import Sequelize from 'sequelize'
 import path from 'path'
+import { IUserModel } from './user'
 import * as config from '../config/config'
 
 const basename = path.basename(__filename)
@@ -39,7 +40,7 @@ Object.keys(models).forEach((modelName) => {
   }
 })
 
-export const User: any = models.User as any
+export const User: IUserModel = models.User as any
 
 // models.sequelize = sequelize
 // models.Sequelize = Sequelize
