@@ -27,8 +27,6 @@ function createApolloClient() {
     credentials: 'same-origin',
   })
 
-  console.log('-------------graphQLUri', graphQLUri)
-
   const authLink = setContext(async ({ query }, { headers }) => {})
 
   const isDevelopment: string = process.env.NODE_ENV

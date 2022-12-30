@@ -22,7 +22,7 @@
     "skipLibCheck": true,
     "paths": {
       "~/*": [
-        "./src/*"
+        "./src/*",
       ]
     },
     "noEmit": true,
